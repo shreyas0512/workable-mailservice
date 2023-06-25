@@ -42,6 +42,33 @@ app.post('/send-email', (req, res) => {
     });
 });
 
+app.post('/reject-email', (req, res) => {
+  const { from,to,company,role } = req.body;
+    // const to ='shreyassanthosh362@gmail.com'
+  const msg = {
+    from,
+    to,
+    templateId: process.env.TEMPLATE_ID,
+    dynamic_template_data: {
+        subject:`${company} response to your application`, 
+        text:`Thank you for applying at ${company} for ${role}. Unfortunately we do not have an opening suited for your skillset at the moment. We will keep your application on file and reach out to you if a suitable position opens up. Thank you for your time.`,
+    },
+
+  };
+
+
+
+  sgMail
+    .send(msg)
+    .then(() => {
+      res.send('Email sent successfully');
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error sending email');
+    });
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
